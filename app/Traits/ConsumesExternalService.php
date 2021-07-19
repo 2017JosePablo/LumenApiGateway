@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Traits;
+
+use GuzzleHttp\Client;
+
+trait ConsumesExternalService{
+	/**
+	 * Send a request to any Service
+	 * @param $method
+	 * @param $requestUrl
+	 * @param array $form_params
+	 * @param array $headers
+	 * @return string
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 */
+	public function performRequest($method, $requestUrl, $form_params=[], $headers=[]){
+		$client=new Client([
+			'base_uri'=>$this->baseUri
+		]);
+		if(isset($this->secret)){
+			$headers['Authorization']=$this->secret;
+		}
+		$response=$client->request($method, $requestUrl, [
+			'form_params'=>$form_params,
+			'headers'=>$headers
+		]);
+		return $response->getBody()->getContents();
+	}
+}
